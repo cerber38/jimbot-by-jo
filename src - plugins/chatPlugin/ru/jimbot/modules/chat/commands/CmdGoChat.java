@@ -163,15 +163,11 @@ public class CmdGoChat extends DefaultCommand {
                c.setLastCommand("");
                c.getData().remove("cmd");
                c.getData().remove("rooms");
-//        if(uss.localnick==null || uss.localnick.equals("") || uss.state==ChatWork.STATE_NO_REG) {
-//             return "Прежде чем войти в чат, необходимо зарегистрироваться.Команда !ник";
-//        }
                 try{
                    String MESSAGE2 = " "+psp.getStringProperty("bot.potok_inchat");
                    String MESSAGE3 = "[";
                    String MESSAGE4 = "] ";
-                //        if (uw.isChat(uin))  cq.sendMsg(new Message(m.getSnOut(), m.getSnIn(), "Вы уже в чате!")); //Юзер уже в чате
-                //        else
+
                             Log.getLogger(p.getService().getName()).info("Add contact " + uin);
                             uss.state = ChatWork.STATE_CHAT;
                             uss.basesn = m.getSnOut();
