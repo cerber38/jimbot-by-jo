@@ -347,7 +347,21 @@ public class ChatCommandParser extends DefaultCommandParser implements QueueList
     
     public void addAuthList (Map<String, String> a) {
             autority.putAll(a);
-    }    
+    }
+
+    /**
+     * Тихая проверка полномочий. Не выводит сообщений.
+     * @param uin
+     * @param obj
+     * @return
+     */
+    public boolean qauth(String uin, String obj){
+        ChatWork cw =((ChatService)srv).getChatWork();
+        if(!cw.authorityCheck(uin, obj)){
+            return false;
+        }
+        return true;
+    }
 
     private void firstMsg(Message m){
     	if(!firstStartMsg){
@@ -551,21 +565,21 @@ public class ChatCommandParser extends DefaultCommandParser implements QueueList
         ChatWork cw =((ChatService)srv).getChatWork();
         ChatConfig psp = ((ChatConfig) srv.getConfig());
         ChatQueue cq =((ChatService) srv).getChatQueue();
-        int room = cw.getUser(user_id).room;
         setKick(uin,t, user_id, r);
         Log.getLogger(srv.getName()).talk("kick user " + uin + " on " + t + " min.");
-        if (cw.getUser(uin).state == ChatWork.STATE_CHAT)
-            if (psp.getBooleanProperty("chat.isShowKickReason")) {
-              //  cq.addMsg(s,m.getSnIn(), uss.room);
-                cq.addMsg("Удален из чата,на "
-                        + t
-                        + " минут, модер: "
-                        + (user_id == 0 ? psp.getStringProperty("adm.nick")
-                                : cw.getUser(user_id).localnick)
-                        + (r.equals("") ? "" : (", Причина: " + r)),uin,room);
-            } else {
-                cq.addMsg( "Удален из чата,на  " + t + " минут",uin,room);
-            }
+        String msg = "Удален из чата,на "+ t + " минут ";
+        if (psp.getBooleanProperty("chat.isShowKickReason")) {
+               msg+= user_id == 0 ? ", модер: "+psp.getStringProperty("adm.nick"): ", модер: "+cw.getUser(user_id).localnick;
+               msg+= r.equals("") ? "" : ", Причина: " + r;
+        }
+//        if (cw.getUser(uin).state == ChatWork.STATE_CHAT)
+
+//            if (psp.getBooleanProperty("chat.isShowKickReason")) {
+//              //  cq.addMsg(s,m.getSnIn(), uss.room);
+                cq.sendMsg(new Message(cw.getUser(uin).basesn, uin, msg));
+//            } else {
+//                cq.addMsg( "Удален из чата,на  " + t + " минут",uin,room);
+//            }
         lkick(uin, "kick user on " + t + " min. - " + r, user_id);
     }
 
@@ -593,7 +607,32 @@ public class ChatCommandParser extends DefaultCommandParser implements QueueList
         akick(uin, 0);
     }
 
+    public void ban(String uin, String adm_uin, String m) {
+        ChatWork cw =((ChatService)srv).getChatWork();
+        ChatConfig psp = ((ChatConfig) srv.getConfig());
+        ChatQueue cq =((ChatService) srv).getChatQueue();
+        Users uss = cw.getUser(uin);
+        if(uss.state==cw.STATE_CHAT) kick(uin);
+        Log.getLogger(srv.getName()).talk("Ban user " + uin);
+        cw.db.get("log").log(uss.id,uin,"BAN",m,uss.room);
+        cw.db.get("events").event(uss.id, uin, "BAN", cw.getUser(adm_uin).id, adm_uin, m);
+        uss.state=cw.STATE_BANNED;
+        cw.updateUser(uss);
+        Log.getLogger(srv.getName()).info("Delete contact " + uin);
+        String msg ="Вы были забанены администратором чата. Теперь вы не сможете принимать и отправлять сообщения.";
+               msg += psp.getBooleanProperty("chat.isShowKickReason") ? "\nПричина: " + m : "";
+        cq.sendMsg(new Message(uss.basesn, uin, msg));
+    }
 
+    public void uban(String uin, String adm_uin) {
+        ChatWork cw =((ChatService)srv).getChatWork();
+        Users uss = cw.getUser(uin);
+        if(uss.state!=cw.STATE_BANNED) return;
+        cw.db.get("log").log(uss.id,uin,"UBAN","",uss.room);
+        cw.db.get("events").event(uss.id, uin, "UBAN", cw.getUser(adm_uin).id, adm_uin, "");
+        uss.state=cw.STATE_NO_CHAT;
+        cw.updateUser(uss);
+    }
 
     /**
      * Процедура проверки на срабатывание условий флуда. Включает кик при необходимости
@@ -660,21 +699,8 @@ public class ChatCommandParser extends DefaultCommandParser implements QueueList
         }
         return s;
     }
-       /**
-     * Тихая проверка полномочий. Не выводит сообщений.
-     * @param proc
-     * @param uin
-     * @param obj
-     * @return
-     */
-    public boolean qauth( String uin, String obj){
-        ChatWork cw =((ChatService)srv).getChatWork();
-        if(!cw.authorityCheck(uin, obj)){
-            return false;
-        }
-        return true;
-    }
-      /**
+     
+    /**
      * Проверка ника на правильность
      */
     public boolean testNick(String sn, String nick){

@@ -47,7 +47,10 @@ public class CommandBuilder implements ICommandBuilder {
                 lc.add(new CmdAdm(p));//список модеров и админов в чате
                 lc.add(new CmdVse(p));//Список пользователей в чате
                 lc.add(new CmdReg(p));//регистрация в чате или смена ника
-                lc.add(new CmdPrivate(p));//Отправить приватное сообщение*
+                lc.add(new CmdPrivate(p));//Отправить приватное сообщение
+                lc.add(new CmdKick(p));//выгнать пользователя из чата
+                lc.add(new CmdBan(p));//забанить пользователя
+                lc.add(new CmdUban(p));//снять бан с пользователя
 		return lc;
 	}
 

@@ -212,10 +212,10 @@ public class ChatConfig implements ServiceConfig {
         setIntProperty("chat.maxNickChanged",99);
         setBooleanProperty("chat.isShowKickReason", false);
         setBooleanProperty("pokaz", false);
-//        setStringProperty("bot.antikick_UIN","111;333");
-//        setStringProperty("bot.antiban_UIN","111;333");
-//        setStringProperty("bot.antikick_MSG","АНТИКИК! *NO*");//Сообщение юзеру при антикике
-//        setStringProperty("bot.antiban_MSG","АНТИБАН! *NO*");//Сообщение юзеру при антибане
+        setStringProperty("bot.antikick_UIN","111;333");
+        setStringProperty("bot.antiban_UIN","111;333");
+        setStringProperty("bot.antikick_MSG","АНТИКИК! *NO*");//Сообщение юзеру при антикике
+        setStringProperty("bot.antiban_MSG","АНТИБАН! *NO*");//Сообщение юзеру при антибане
         setStringProperty("bot.user_outchat","Вы вышли из чата!");//Сообщение юзеру при выходе из чата
         setStringProperty("bot.user_outchat","Вы вышли из чата!");//Сообщение юзеру при выходе из чата
         setStringProperty("bot.potok_outchat","вышел(а) из чата");//Сообщение в поток при выходе юзера из чата
@@ -267,7 +267,7 @@ public class ChatConfig implements ServiceConfig {
 //        setIntProperty("magas.uin_8",1500);
 //        setIntProperty("magas.uin_9",500);
         setIntProperty("uin.private",1233456);
-      //  setBooleanProperty("spisok_room", false);
+        setBooleanProperty("spisok_room", false);
       //  setBooleanProperty("dostup_osn", true);
       //  setBooleanProperty("vhod_ch", false);
       //  setBooleanProperty("grant_ch", false);
@@ -322,7 +322,7 @@ public class ChatConfig implements ServiceConfig {
              new UserPreference(UserPreference.CATEGORY_TYPE,"main", "Основные настройки",""),
             new UserPreference(UserPreference.INTEGER_TYPE,"timeOut","Пауза между подключениями UINs сервиса",getIntProperty("timeOut")),
             //new UserPreference(UserPreference.BOOLEAN_TYPE,"dostup_osn","Ограничить доступ к настройкам",getBooleanProperty("dostup_osn")),
-           // new UserPreference(UserPreference.BOOLEAN_TYPE,"spisok_room","Показывать список комнат при входе",getBooleanProperty("spisok_room")),
+            new UserPreference(UserPreference.BOOLEAN_TYPE,"spisok_room","Показывать список комнат при входе",getBooleanProperty("spisok_room")),
           // new UserPreference(UserPreference.BOOLEAN_TYPE,"vhod_ch","Блокировать вход при 0 балансе",getBooleanProperty("vhod_ch")),
           //  new UserPreference(UserPreference.BOOLEAN_TYPE,"grant_ch","Снимать полномочия до (user) про 0 балансе",getBooleanProperty("grant_ch")),
             new UserPreference(UserPreference.BOOLEAN_TYPE,"main.StartBot","Запускать чат-бот",getBooleanProperty("main.StartBot")),
@@ -435,6 +435,8 @@ public class ChatConfig implements ServiceConfig {
             new UserPreference(UserPreference.TEXTAREA_TYPE,"bot.privetstvie_9","Реклама при отправке +а",getStringProperty("bot.privetstvie_9")),
             new UserPreference(UserPreference.TEXTAREA_TYPE,"bot.proschanie","Реклама при выходе из чата",getStringProperty("bot.proschanie")),
             new UserPreference(UserPreference.STRING_TYPE,"bot.not_messeges","Если команда не верна",getStringProperty("bot.not_messeges")),
+            new UserPreference(UserPreference.STRING_TYPE,"bot.antikick_MSG","Сообщение при антикике",getStringProperty("bot.antikick_MSG")),
+            new UserPreference(UserPreference.STRING_TYPE,"bot.antiban_MSG","Сообщение при антибане",getStringProperty("bot.antiban_MSG")),
         new UserPreference(UserPreference.SPOILER_TYPE_OFF,"SPOILER_OFF", "-------------",""),
            
             new UserPreference(UserPreference.CATEGORY_TYPE,"bot", "Разные настройки",""),
@@ -442,8 +444,8 @@ public class ChatConfig implements ServiceConfig {
             new UserPreference(UserPreference.BOOLEAN_TYPE,"pokaz","Показывать ид возле ника",getBooleanProperty("pokaz")),
             new UserPreference(UserPreference.INTEGER_TYPE,"uin.private","Уин на который будут приходить все приваты",getIntProperty("uin.private")),
             new UserPreference(UserPreference.STRING_TYPE,"msg.adminuUIN","Уин на который будут приходить все сообщения для админа",getStringProperty("msg.adminuUIN")),
-//            new UserPreference(UserPreference.STRING_TYPE,"bot.antikick_UIN","Антикик UIN",getStringProperty("bot.antikick_UIN")),
-//            new UserPreference(UserPreference.STRING_TYPE,"bot.antiban_UIN","Антибан UIN",getStringProperty("bot.antiban_UIN")),
+            new UserPreference(UserPreference.STRING_TYPE,"bot.antikick_UIN","Антикик UIN",getStringProperty("bot.antikick_UIN")),
+            new UserPreference(UserPreference.STRING_TYPE,"bot.antiban_UIN","Антибан UIN",getStringProperty("bot.antiban_UIN")),
             new UserPreference(UserPreference.STRING_TYPE,"money","Денежная единица в чате",getStringProperty("money")),
            // new UserPreference(UserPreference.INTEGER_TYPE,"room.money","Комната для перевода с кошелька на кошелек",getIntProperty("room.money")),
          //   new UserPreference(UserPreference.INTEGER_TYPE,"min.money","Минимальная сумма перевода",getIntProperty("min.money")),
@@ -584,6 +586,19 @@ public class ChatConfig implements ServiceConfig {
         return false;
     }
 
+    public boolean testAkick(String screenName) {
+         for(String s : getStringProperty("bot.antikick_UIN").split(";")) {
+           if(screenName.equals(s)) return true;
+         }
+        return false;
+    }
+
+    public boolean testAban(String screenName) {
+         for(String s : getStringProperty("bot.antiban_UIN").split(";")) {
+           if(screenName.equals(s)) return true;
+         }
+        return false;
+    }
 
 public String translitEng(String str){
 
