@@ -21,6 +21,7 @@ package ru.jimbot.modules.chat;
 
 
 //import ru.jimbot.modules.ChatCommandConnector;
+import ru.jimbot.core.api.Task;
 import ru.jimbot.modules.chat.tasks.CheckSessionTask;
 import ru.jimbot.modules.chat.tasks.ChangeStatusTask;
 import ru.jimbot.Manager;
@@ -212,7 +213,7 @@ public class ChatService extends DefaultService implements DbStatusListener {
         for(CommandProtocolListener i:getCommandProtocolListeners()) {
             i.logOn();
         }
-        getCron().addTask(new QuizTask(this, config.getIntProperty("vik.sek")*1000, cw));
+        getCron().addTask( new QuizTask(this, config.getIntProperty("vik.sek")*1000, cw));
        if (config.getBooleanProperty("ads.useXT")) getCron().addTask(new ChangeStatusTask(this, config.getIntProperty("chat.xt")*60000, cw));
        if (config.getBooleanProperty("adm.useAdmin")) getCron().addTask(new AdminTask(this, 1000));
     }

@@ -1120,6 +1120,15 @@ public class ChatWork {
     }
 
     /**
+     * Удаление комнаты
+     * @param id
+     * @return
+     */
+    public boolean delRoom(int id){
+    	return rw.deleteRoom(id);
+    }
+
+    /**
      * Обновление уже существующей комнаты
      * @param r
      * @param pass
