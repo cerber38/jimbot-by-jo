@@ -113,6 +113,27 @@ public class RoomWork {
         }
         return f;
 	}
+
+	/**
+	 * удаление комнаты
+	 * @param i
+	 * @return
+	 */
+	public boolean deleteRoom(int i){
+        String q = "DELETE FROM rooms WHERE id="+i;
+        Log.getDefault().debug("DELETE room id=" + i);
+        boolean f = false;
+        try {
+        	PreparedStatement pst = db.getDb().prepareStatement(q);
+                pst.execute();
+                pst.close();
+        	rc.remove(i);
+        	f=true;
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return f;
+	}
 	
 	/**
 	 * Обновление данных о комнате
