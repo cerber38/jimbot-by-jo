@@ -129,11 +129,13 @@ public class ChatWork {
 
     public int count() {
         if (currCountUser==0)
-            currCountUser = (int)db.get("users").getLastIndex("users")+1;
+            currCountUser = (int)db.get("users").getLastIndex("users");
+        currCountUser = currCountUser==0 ? 1 : currCountUser;
         return currCountUser;
     }
         public int count2() {
-        return (int)db.get("users").getLastIndex("invites")+1;
+            int invites = (int)db.get("users").getLastIndex("invites");
+        return invites==0 ? 1 : invites;
     }
    public int getLastIndex(String base,String tabl) {
         return (int)this.db.get(base).getLastIndex(tabl)+1;

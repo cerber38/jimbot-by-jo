@@ -113,11 +113,17 @@ public class CmdGoChat extends DefaultCommand {
          Users uss = uw.getUser(uin);
          ChatConfig psp =((ChatService)p.getService()).getConfig();
          ChatQueue cq =((ChatService)p.getService()).getChatQueue();
-         String k = c.getData("cmd")==null ? "" : (String)c.getData("cmd");
+
         if(uss.localnick==null || uss.localnick.equals("") || uss.state==ChatWork.STATE_NO_REG) {
             return "Прежде чем войти в чат, необходимо зарегистрироваться.Команда !ник";
         }else
          if (uw.isChat(uin)) return "Вы уже в чате!";
+
+        if(!psp.getBooleanProperty("spisok_room")){
+          goChat(uw, uss, psp, cq);
+          return null;
+        }
+         String k = c.getData("cmd")==null ? "" : (String)c.getData("cmd");
          if("".equals(c.getLastCommand())) c.setLastCommand("!чат");
 
          if(!"да заходи, чего уш там".equals(k)) {
@@ -163,7 +169,55 @@ public class CmdGoChat extends DefaultCommand {
                c.setLastCommand("");
                c.getData().remove("cmd");
                c.getData().remove("rooms");
-                try{
+               goChat(uw, uss, psp, cq);
+//                try{
+//                   String MESSAGE2 = " "+psp.getStringProperty("bot.potok_inchat");
+//                   String MESSAGE3 = "[";
+//                   String MESSAGE4 = "] ";
+//
+//                            Log.getLogger(p.getService().getName()).info("Add contact " + uin);
+//                            uss.state = ChatWork.STATE_CHAT;
+//                            uss.basesn = m.getSnOut();
+//                            uw.updateUser(uss);
+//                           // if (cmd.srv.us.authorityCheck(uin, "Show")) {
+//                            cq.addMsg(psp.getStringProperty("auth.group_prist_"+uss.group)+" "+uss.localnick +MESSAGE3 + uss.id +MESSAGE4 + MESSAGE2, m.getSnIn(), uss.room);
+//                          //  }
+//                            cq.sendMsg(new Message(m.getSnOut(), m.getSnIn(),
+//                                    "<<< *HI* Добро пожаловать в чат >>>" +
+//                                    "\nВаш ID = [" + uss.id + "]." +
+//                                  //  "\nВаш UIN = [" + uin + "]." +
+//                                    "\nВаш NICK = [" + uss.localnick + "]." +
+//                                    "\nУ вас в кошельке = [" + uss.country + "] "+psp.getStringProperty("money")+
+//                                    "\n~======~" +
+//                                    "\nВы в комнате = [" + uss.room + "]." +
+//                                    "\nНазвание комнаты = [" + uw.getRoom(uss.room).getName() + "].  " +
+//                                    "\nТема комнаты = [" + uw.getRoom(uss.room).getTopic() + "]." +
+//                                    "\n"+psp.getStringProperty("bot.user_inchat")));
+//
+//                        Log.getLogger(p.getService().getName()).talk(uss.localnick + MESSAGE2);
+//                        uw.log(uss.id,uin,"STATE_IN",uss.localnick + MESSAGE2,uss.room);
+//                        uw.event(uss.id, uin, "STATE_IN", 0,"",psp.getStringProperty("auth.group_prist_"+uss.group)+" "+uss.localnick +MESSAGE3 + uss.id +MESSAGE4 + MESSAGE2);
+//                        cq.addUser(m, uss.room);
+//
+//                                if(uw.getCurrUinUsers(uss.basesn)>psp.getIntProperty("chat.maxUserOnUin")){
+//                                   cq.sendMsg(new Message(m.getSnOut(), m.getSnIn(),"Данный номер слишком загружен, вы будете автоматически переведены на более свободный номер."));
+//                                   String s = uw.getFreeUin();
+//                                   uss.basesn = s;
+//                                   uw.updateUser(uss);
+//                                   cq.changeUser(uin, s);
+//                                   cq.sendMsg(new Message(m.getSnOut(), m.getSnIn(),"Следующее сообщение придет с номера " + s));
+//                               }
+//                        } catch (Exception ex) {
+//                            ex.printStackTrace();
+//                            Log.getLogger(p.getService().getName()).error(ex.getMessage());
+//                        }
+   }
+         return null;
+  }
+
+    public void goChat(ChatWork uw, Users uss, ChatConfig psp, ChatQueue cq){
+                   String uin =uss.sn;
+                      try{
                    String MESSAGE2 = " "+psp.getStringProperty("bot.potok_inchat");
                    String MESSAGE3 = "[";
                    String MESSAGE4 = "] ";
@@ -204,9 +258,7 @@ public class CmdGoChat extends DefaultCommand {
                             ex.printStackTrace();
                             Log.getLogger(p.getService().getName()).error(ex.getMessage());
                         }
-   }
-         return null;
-  }
+    }
 
     /**
      * Выполнение команды

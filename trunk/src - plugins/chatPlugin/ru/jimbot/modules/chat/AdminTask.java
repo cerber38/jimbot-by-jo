@@ -25,13 +25,14 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import ru.essence.module.сore.Logic;
-import ru.essence.module.сore.MessageListener;
-import ru.essence.module.сore.OutMessageEvent;
 import ru.jimbot.core.Message;
 import ru.jimbot.core.api.Task;
 import ru.jimbot.modules.chat.tables.Users;
 import ru.jimbot.util.Log;
+//import ru.сreator.logical.links.сore.Logic;
+//import ru.сreator.logical.links.сore.MessageListener;
+//import ru.сreator.logical.links.сore.OutMessageEvent;
+
 
 
 
@@ -40,7 +41,7 @@ import ru.jimbot.util.Log;
  * @author Prolubnikov Dmitry
  * @author ~jo-MA-jo~
  */
-public class AdminTask implements Task, MsgParserListener, MessageListener{
+public class AdminTask implements Task, MsgParserListener/*, MessageListener*/{
     private ChatService srv;
     private long period = 0;
     private boolean enabled = true;
@@ -69,7 +70,7 @@ public class AdminTask implements Task, MsgParserListener, MessageListener{
                             {"C","с"},{"6","б"}};
     private Random r = new Random(); 
     private HashMap autority = new HashMap<String, String>();
-    private Logic logic;
+   // private Logic logic;
     
 
     /**
@@ -97,7 +98,7 @@ public class AdminTask implements Task, MsgParserListener, MessageListener{
         autority.put("adminstat","Получать статистику от админа");
         ccp.addAuthList (autority);
         System.out.println("Starting: RobAdmin [ "+NICK+" ] - Ok!");
-        logic = new Logic(this,"./services/"+srv.getName()+"/dbRobAdmin/");
+     //   logic = new Logic(this,"./services/"+srv.getName()+"/dbRobAdmin/");
     }
 
     
@@ -236,22 +237,22 @@ public class AdminTask implements Task, MsgParserListener, MessageListener{
             return;
         }
        //разговор
-        if(testName(ms.getMsg()))logic.onIncomingMessage(uss.sn, getСleanMsg(ms.getMsg()));//speak(getAdmin(uss.localnick), uss.room)/*think(ms.getMsg(),uss)*/;
+        if(testName(ms.getMsg()))/*logic.onIncomingMessage(uss.sn, getСleanMsg(ms.getMsg()));*/speak(getAdmin(uss.localnick), uss.room)/*think(ms.getMsg(),uss)*/;
    }
     
     
-    /**
-     * убираем ник админа
-     */
-    public String getСleanMsg(String msg){
-            String[] s = msg.toLowerCase().split(" ");
-            msg="";
-        for (int i=0; i<s.length; i++){
-            msg+= testName(s[i]) ? "" : s[i]+" ";
-            //msg+= i+1<s.length ? " " : "";
-        }
-         return msg.trim();
-    }  
+//    /**
+//     * убираем ник админа
+//     */
+//    public String getСleanMsg(String msg){
+//            String[] s = msg.toLowerCase().split(" ");
+//            msg="";
+//        for (int i=0; i<s.length; i++){
+//            msg+= testName(s[i]) ? "" : s[i]+" ";
+//            //msg+= i+1<s.length ? " " : "";
+//        }
+//         return msg.trim();
+//    }
 //
 //    /**
 //     *Поиск возможного варианта ответа
@@ -268,11 +269,11 @@ public class AdminTask implements Task, MsgParserListener, MessageListener{
     * @param m
     */
         
-    public void onOutMessage(OutMessageEvent m) {
-        Users uss = cw.getUser(m.getAddresseeID());
-        String msg = uss.localnick+" "+m.getResponse();
-        speak(msg, uss.room);
-    }
+//    public void onOutMessage(OutMessageEvent m) {
+//        Users uss = cw.getUser(m.getAddresseeID());
+//        String msg = uss.localnick+" "+m.getResponse();
+//        speak(msg, uss.room);
+//    }
     
    /**
     * бла бла бла
