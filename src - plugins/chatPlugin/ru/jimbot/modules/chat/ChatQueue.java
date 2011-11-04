@@ -185,6 +185,7 @@ public class ChatQueue implements Runnable {
     }
 
        public void sendMsg(Message m) {
+            m.setMsg(((ChatCommandParser) srv.getCommandParser()).translit(m.getMsg(), m.getSnOut()));
         if (m==null&&m.getSnOut().equals("")&&m.getMsg().equals(""))return;
         for(QueueListener i:srv.getOutQueueListeners()) {
             i.onMessage(m);

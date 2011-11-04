@@ -62,6 +62,7 @@ public class Users extends DBObject {
      public String lastnick="";
      public String pass="";
      public String webpage="нет";
+     public int unicode = 0;
     /** Creates a new instance of Users */
     public Users() {
         init();
@@ -107,13 +108,13 @@ public class Users extends DBObject {
         fields = new String[] {"id","sn","nick","localnick","fname","lname",
             "email","city","homepage","gender","birthyear","birthmonth","birthday",
             "age","country","language","state","basesn","createtime", "room", "lastkick",
-            "lbalans", "balans", "cena", "dateb","lastnick","pass","webpage"};
+            "lbalans", "balans", "cena", "dateb","lastnick","pass","webpage","unicode"};
         types = new int[] {Types.INTEGER, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
             Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,
             Types.INTEGER, Types.INTEGER,Types.INTEGER,Types.INTEGER,Types.INTEGER,
             Types.INTEGER,Types.INTEGER,Types.INTEGER,Types.VARCHAR,Types.TIMESTAMP,
             Types.INTEGER, Types.TIMESTAMP,Types.INTEGER,Types.INTEGER,Types.INTEGER,
-            Types.TIMESTAMP, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR};
+            Types.TIMESTAMP, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR,Types.INTEGER};
         tableName="users";
     }
 
@@ -145,7 +146,7 @@ public class Users extends DBObject {
     public String getTableName(){
         return this.tableName;
     }
-    
+
    public DBObject getObject(Connection db, String q){
         Users us = new Users();
         ResultSet rSet=null;
@@ -175,25 +176,26 @@ public class Users extends DBObject {
             us.createtime = rSet.getTimestamp(19).getTime();
             us.room = rSet.getInt(20);
             if(rSet.getLong(21)==0)
-            	us.lastKick = System.currentTimeMillis();
+                us.lastKick = System.currentTimeMillis();
             else
-            	us.lastKick = rSet.getTimestamp(21).getTime();
+                us.lastKick = rSet.getTimestamp(21).getTime();
             us.lbalans = rSet.getInt(22);
             us.balans = rSet.getInt(23);
             us.cena = rSet.getInt(24);
            if(rSet.getLong(25)==0)
-            	us.dateb = System.currentTimeMillis();
+                us.dateb = System.currentTimeMillis();
             else
-            	us.dateb = rSet.getTimestamp(25).getTime();
+                us.dateb = rSet.getTimestamp(25).getTime();
             us.lastnick = rSet.getString(26);
             us.pass = rSet.getString(27);
             us.webpage = rSet.getString(28);
+            us.unicode = rSet.getInt(29);
 //            closeQuery();
         } catch (Exception ex){
             ex.printStackTrace();
         } finally {
-        	if(rSet!=null) try{rSet.close();} catch(Exception e) {};
-        	if(stmt!=null) try{stmt.close();} catch(Exception e) {};
+                if(rSet!=null) try{rSet.close();} catch(Exception e) {};
+                if(stmt!=null) try{stmt.close();} catch(Exception e) {};
         }
         return us;
     }
@@ -203,8 +205,8 @@ public class Users extends DBObject {
         ResultSet rSet=null;
         Statement stmt=null;
         try{
-        	stmt = db.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        	rSet = stmt.executeQuery(q);
+                stmt = db.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+                rSet = stmt.executeQuery(q);
             while(rSet.next()) {
                 Users us = new Users();
                 us.id = rSet.getInt(1);
@@ -228,32 +230,33 @@ public class Users extends DBObject {
                 us.createtime = rSet.getTimestamp(19).getTime();
                 us.room = rSet.getInt(20);
                 if(rSet.getLong(21)==0)
-                	us.lastKick = System.currentTimeMillis();
+                        us.lastKick = System.currentTimeMillis();
                 else
-                	us.lastKick = rSet.getTimestamp(21).getTime();
+                        us.lastKick = rSet.getTimestamp(21).getTime();
                 us.lbalans = rSet.getInt(22);
                 us.balans = rSet.getInt(23);
                 us.cena = rSet.getInt(24);
            if(rSet.getLong(25)==0)
-            	us.dateb = System.currentTimeMillis();
+                us.dateb = System.currentTimeMillis();
             else
-            	us.dateb = rSet.getTimestamp(25).getTime();
+                us.dateb = rSet.getTimestamp(25).getTime();
                  us.lastnick = rSet.getString(26);
                  us.pass = rSet.getString(27);
                  us.webpage = rSet.getString(28);
+                 us.unicode = rSet.getInt(29);
                 v.addElement(us);
             }
 //            closeQuery();
         } catch (Exception ex){
             ex.printStackTrace();
         } finally {
-        	if(rSet!=null) try{rSet.close();} catch(Exception e) {};
-        	if(stmt!=null) try{stmt.close();} catch(Exception e) {};
+                if(rSet!=null) try{rSet.close();} catch(Exception e) {};
+                if(stmt!=null) try{stmt.close();} catch(Exception e) {};
         }
         return v;
 
     }
-    
+
     public PreparedStatement insertPrepStat(Connection db) {
              Users us = this;
              PreparedStatement pst = null;
@@ -293,6 +296,7 @@ public class Users extends DBObject {
             pst.setString(26,us.lastnick);
             pst.setString(27,us.pass);
             pst.setString(28,us.webpage);
+            pst.setInt(29,us.unicode);
         } catch (Exception ex){
             ex.printStackTrace();
         }
@@ -337,9 +341,10 @@ public class Users extends DBObject {
             pst.setString(25,us.lastnick);
             pst.setString(26,us.pass);
             pst.setString(27,us.webpage);
+            pst.setInt(28,us.unicode);
         } catch (Exception ex){
             ex.printStackTrace();
         }
              return pst;
-    }    
+    }
 }

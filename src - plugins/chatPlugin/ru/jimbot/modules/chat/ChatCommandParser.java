@@ -18,8 +18,15 @@
 
 package ru.jimbot.modules.chat;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ru.jimbot.modules.chat.tables.Users;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
@@ -34,6 +41,7 @@ import ru.jimbot.core.api.QueueListener;
 import ru.jimbot.modules.FloodElement;
 import ru.jimbot.modules.chat.commands.CommandBuilder;
 import ru.jimbot.modules.chat.games.QuizTask;
+import ru.jimbot.util.FileUtils;
 
 
 import ru.jimbot.util.HttpUtils;
@@ -54,6 +62,7 @@ public class ChatCommandParser extends DefaultCommandParser implements QueueList
     private HashSet<String> warnFlag; // Флаг предупреждения о молчании
     private ConcurrentHashMap <String,String> up; // Запоминаем последний пришедший приват
     private List<MsgParserListener> msgParserList = new Vector<MsgParserListener>();
+    private HashMap<String, String> lng = new HashMap<String, String>();
 
   //  public ChatConfig psp;
   //  public ChatWork us;
@@ -75,6 +84,7 @@ public class ChatCommandParser extends DefaultCommandParser implements QueueList
             warnFlag = new HashSet<String>();
             statKick = new ConcurrentHashMap();
         initCommands();
+        initUnicode();
     }
 
 
@@ -101,7 +111,74 @@ public class ChatCommandParser extends DefaultCommandParser implements QueueList
         
 
     }
+   public void initUnicode(){
+       try{
+       File f = new File("Unicode.txt");
+       if (!f.exists()){
+          String u= "Г+ Ғ\n"+
+                    "г+ ғ\n"+
+                    "З+ Ҙ\n"+
+                    "з+ ҙ\n"+
+                    "Х+ Һ\n"+
+                    "х+ һ\n"+
+                    "С+ Ҫ\n"+
+                    "с+ ҫ\n"+
+                    "К+ Ҡ\n"+
+                    "к+ ҡ\n"+
+                    "О+ Ө\n"+
+                    "о+ ө\n"+
+                    "У+ Ү\n"+
+                    "у+ ү\n"+
+                    "А+ Ә\n"+
+                    "а+ ә\n"+
+                    "Н+ Ң\n"+
+                    "н+ ң\n"+
+                    "Ж+ Җ\n"+
+                    "ж+ җ";
+           FileUtils.saveFile("Unicode.txt", u, "UTF-8");
+           }
+        String text="";
+        
+            BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("Unicode.txt"),"UTF-8"));
+            while (r.ready()){
+                text = r.readLine();
+                lng.put(text.split(" ")[0], text.split(" ")[1]);
+            }
+            r.close();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
 
+        /**
+         *
+         * @param str
+         * @param uin
+         * @return
+         */
+         public String translit(String str,  String uin){
+             boolean inversely = isUnicode(uin);
+                  for(String U:lng.keySet()){
+                    str= inversely ? str.replace(U,lng.get(U))
+                                   :
+                                     str.replace(lng.get(U),U);
+                }
+
+         return str;
+          }
+
+         public boolean isUnicode(String uin) {
+                ChatWork cw =((ChatService)srv).getChatWork();
+                try{
+                   if(cw.getUser(uin).unicode==1){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (Exception ex){
+                    return false; //если это новый пользователь
+                }
+            }
      class KickInfo {
         public int id=0;
         public int len=0;

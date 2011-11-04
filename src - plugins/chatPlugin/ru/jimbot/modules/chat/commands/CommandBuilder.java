@@ -54,6 +54,8 @@ public class CommandBuilder implements ICommandBuilder {
                 lc.add(new CmdChRoom(p));//создать новую комнату
                 lc.add(new CmdCrRoom(p));//изменить название комнаты
                 lc.add(new CmdDelRoom(p));//удалить комнату
+                lc.add(new CmdUnicodeOn(p));
+                lc.add(new CmdUnicodeOff(p));
 		return lc;
 	}
 
