@@ -1,21 +1,3 @@
-/*
- * JimBot - Java IM Bot
- * Copyright (C) 2006-2010 JimBot project
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
-
 package ru.jimbot.modules.chat.commands;
 
 import java.lang.reflect.Constructor;
@@ -32,7 +14,6 @@ import ru.jimbot.core.api.Parser;
 
 /**
  * 
- * @author Prolubnikov Dmitry
  * @author ~jo-MA-jo~
  */
 public class CommandBuilder implements ICommandBuilder {
@@ -67,18 +48,16 @@ public class CommandBuilder implements ICommandBuilder {
                 JarEntry jarEntry = (JarEntry) entries.nextElement();
                 // Одно из назначений хорошего загрузчика - валидация классов на этапе загрузки
                 if (match(normalize(jarEntry.getName()), "ru.jimbot.modules.chat.commands")) {
-           //        System.out.println("!!! "+normalize(jarEntry.getName()));
                     String cl = normalize2(jarEntry.getName());
+                    System.out.println("Load chat command: "+cl.replace("ru.jimbot.modules.chat.commands.", ""));
                     Class clazz= this.getClass().getClassLoader().loadClass(cl);
                     Constructor c= clazz.getConstructor(new Class[] {Parser.class});
                     lc.add((Command)c.newInstance(new Object[] {p}));
                 }
             }
-      //Manager.getInstance().putServiceBuilder((IServiceBuilder) this.getClass().getClassLoader().loadClass("ru.jimbot.modules.chat.ChatServiceBuilder").newInstance());
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-
 		return lc;
 	}
 
@@ -92,7 +71,7 @@ public class CommandBuilder implements ICommandBuilder {
      * @return
      */
     private boolean match(String className, String packageName) {
-        return  !className.equalsIgnoreCase("CommandBuilder.class") && className.startsWith(packageName) && className.endsWith(".class");
+        return  !className.endsWith("CommandBuilder.class") && className.startsWith(packageName) && className.endsWith(".class");
     }
     /**
      * Преобразуем имя в файловой системе в имя класса
