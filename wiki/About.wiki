@@ -1,4 +1,5 @@
-#imBot mod by ~Jo-MA-Jo~
+#summary imBot mod by ~Jo-MA-Jo~
+
 = Немного о боте =
 
 Данный бот представляет собой некую модульную систему.
