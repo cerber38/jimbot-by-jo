@@ -1,5 +1,4 @@
-#summary One-sentence summary of this page.
-
+#imBot mod by ~Jo-MA-Jo~
 = Немного о боте =
 
 Данный бот представляет собой некую модульную систему.
