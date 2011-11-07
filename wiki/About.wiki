@@ -1,4 +1,4 @@
-#summary imBot mod by ~Jo-MA-Jo~
+#summary JimBot mod by ~Jo-MA-Jo~
 
 = Немного о боте =
 
