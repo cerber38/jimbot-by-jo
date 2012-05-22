@@ -42,6 +42,7 @@ public class MainPageL2 extends MainPageServletActions {
         MainConfig ms = MainConfig.getInstance();
         Users user = users.get(uid);
        con.print(HTML_HEAD +"<meta http-equiv=\"Refresh\" content=\"7; url=?page=main_pageL2\" />" +
+//      con.print(HTML_HEAD +
                "<TITLE>JimBot " + MainConfig.VERSION + " </TITLE></HEAD>" + BODY1);
     if(ms.testAdmin(user.UserName,user.UserPass)){
     con.print( "<H4>Главное меню</H4><H5>");

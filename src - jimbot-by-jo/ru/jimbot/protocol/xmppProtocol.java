@@ -78,6 +78,7 @@ public class xmppProtocol implements Protocol, CommandProtocolListener,
         for(ProtocolListener i:protList) {
             i.onTextMessage(m);
         }
+        
     }
 
     private void notifyStatus(Message m) {
@@ -101,9 +102,15 @@ public class xmppProtocol implements Protocol, CommandProtocolListener,
     }
 
     public void setConnectionData(String server, int port, String sn, String pass) {
-        this.server = server;
-        this.port = port;
+      if (sn.indexOf("@")>=0){
+          this.server = sn.split("@")[1];
+//          this.screenName = sn.split("@")[0];
+      }else{
+          this.server = server;
+ //         this.screenName = sn;
+     }
         this.screenName = sn;
+        this.port = port;
         this.pass = pass;
     }
 
@@ -141,14 +148,14 @@ public class xmppProtocol implements Protocol, CommandProtocolListener,
             SASLAuthentication.supportSASLMechanism("PLAIN");
             connection = new XMPPConnection(config);
             connection.connect();
-            connection.login(screenName, pass);
+            connection.login(screenName.split("@")[0], pass);
             connection.getChatManager().addChatListener(this);
 
             setStatus(true, xstatustxt2);
             if (connection.isConnected())System.out.println(screenName + " Online!");
             connected = true;
           //  notifyLogon();
-        } catch (XMPPException ex) {
+         } catch (XMPPException ex) {
             ex.printStackTrace();
         }
 
@@ -255,11 +262,16 @@ public class xmppProtocol implements Protocol, CommandProtocolListener,
 
 
     public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message){
-   //     System.out.println("processMessage "+chat.getParticipant() + " says: " + message.getBody());
+        
+//        System.out.println("getLanguage "+chat.getParticipant() + " says: " + message.getLanguage());
+     //   System.out.println("toXML "+chat.getParticipant() + " says: " + message.toXML());
    //     System.out.println("SenderID "+chat.getParticipant().split("/")[0]);
-     if(message.getType() == org.jivesoftware.smack.packet.Message.Type.chat){
-        String SenderID = chat.getParticipant().split("/")[0];
+
+     if(!message.getBody().isEmpty()&&message.getType() == org.jivesoftware.smack.packet.Message.Type.chat){
+        String SenderID = chat.getParticipant().indexOf("/")>=0?chat.getParticipant().split("/")[0]:chat.getParticipant();
+// System.out.println("SenderID "+SenderID);
         String msg = message.getBody();
+//        System.out.println("processMessage "+SenderID + " says: " + msg);
               if(FileUtils.isIgnor(SenderID)){
 			logger.flood2("IGNORE LIST: " + SenderID + "->" + screenName + ": " + msg);
 			return;
@@ -304,5 +316,29 @@ public class xmppProtocol implements Protocol, CommandProtocolListener,
         xstatustxt2 = text2;
 
    //     OscarInterface.changeXStatus(con, new XStatusModeEnum(status));
+    }
+
+    public void addContactList(String contact, String group) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean getGroupByName(String group) {
+         return false;
+    }
+
+    public boolean getContactById(String uin) {
+         return false;
+    }
+
+    public void clearContactList() {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void addGroup(String group) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void delGroup(String group) {
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

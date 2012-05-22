@@ -89,6 +89,7 @@ public class Messages {
 //                    return bundle;
 //                }
 //            });
+
     private static final ResourceBundle RESOURCE_BUNDLE = getNewBundle();
 
     private static ResourceBundle getNewBundle(){
@@ -147,3 +148,4 @@ public class Messages {
     }
 
 }
+
