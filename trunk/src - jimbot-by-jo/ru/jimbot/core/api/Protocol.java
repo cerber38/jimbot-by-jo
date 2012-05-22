@@ -103,17 +103,7 @@ public interface Protocol {
 //     */
 //    public void getStatus(String sn, int status);
 
-    /**
-     * Добавить в контакт-лист
-     * @param sn
-     */
-    public void addContactList(String sn);
 
-    /**
-     * Удалить из контакт-листа
-     * @param sn
-     */
-    public void RemoveContactList(String sn);
 
 //    /**
 //     * Установить параметры соединения
@@ -154,4 +144,48 @@ public interface Protocol {
      * @return
      */
     public List<ProtocolListener> getProtocolListeners();
+
+
+   public void addContactList(String contact, String group);
+
+    /**
+     * Проверим создана группа или нет
+     * @param group
+     * @return
+     */
+    public boolean getGroupByName(String group);
+
+    /**
+     * Проверим добавлен уин или нет
+     * @param group
+     * @return
+     */
+    public boolean getContactById(String uin);
+
+    /**
+    * Удаление пользователя с UIN
+    * @param uin - UIN пользователя
+    */
+       
+    public void RemoveContactList(String uin);
+
+    /**
+    * Очистка контакт листа
+    */
+       
+    public void clearContactList();
+
+    /**
+    * Добавляем новую группу
+    * @param group
+    */
+       
+    public void addGroup(String group);
+
+    /**
+    * Удаление группы по ее названию
+    * @param group
+    */
+
+    public void delGroup(String group);
 }

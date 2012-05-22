@@ -18,7 +18,11 @@
 
 package ru.jimbot.protocol;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ru.caffeineim.protocols.icq.core.OscarConnection;
 import ru.caffeineim.protocols.icq.exceptions.ConvertStringException;
 import ru.caffeineim.protocols.icq.integration.OscarInterface;
@@ -37,7 +41,13 @@ import ru.jimbot.util.Log;
 
 import java.util.List;
 import java.util.Vector;
+import ru.caffeineim.protocols.icq.contacts.Contact;
+import ru.caffeineim.protocols.icq.contacts.ContactListItem;
+import ru.caffeineim.protocols.icq.contacts.Group;
+import ru.caffeineim.protocols.icq.exceptions.ContactListOperationException;
+import ru.caffeineim.protocols.icq.integration.listeners.ContactListListener;
 import ru.caffeineim.protocols.icq.setting.enumerations.ClientsEnum;
+import ru.caffeineim.protocols.icq.setting.enumerations.SsiResultModeEnum;
 
 /**
  * Работа с протоколом ICQ
@@ -45,7 +55,7 @@ import ru.caffeineim.protocols.icq.setting.enumerations.ClientsEnum;
  * @author Prolubnikov Dmitry
  */
 public class IcqProtocol implements Protocol, CommandProtocolListener,
-        OurStatusListener, MessagingListener, XStatusListener {
+        OurStatusListener, MessagingListener, XStatusListener , ContactListListener {
     private OscarConnection con=null;
     	private String lastInfo = "";
 //    private Service srv; // Ссылка на сервис
@@ -176,13 +186,7 @@ public class IcqProtocol implements Protocol, CommandProtocolListener,
 		}
     }
 
-    public void addContactList(String sn) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
-    public void RemoveContactList(String sn) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     public String getScreenName() {
         return screenName;
@@ -339,4 +343,152 @@ public class IcqProtocol implements Protocol, CommandProtocolListener,
     public void onXStatusResponse(XStatusResponseEvent e) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+
+
+    //--------работа с контакт листом--------//
+
+    /**
+    * Добавляем контакта
+    * @param contact - UIN пользователя
+    * @param group - название группы
+    */
+        //@Override
+    public void addContactList(String contact, String group) {
+    try {
+
+    addGroup(group);
+
+    if(getContactById(contact)) con.getContactList().addContact(contact, group);
+
+    } catch (ContactListOperationException ex) {
+        ex.printStackTrace();
+    System.out.println("Error " + ex.getMessage());
+    }
+    }
+
+    /**
+     * Проверим создана группа или нет
+     * @param group
+     * @return
+     */
+    public boolean getGroupByName(String group) {
+    if(con.getContactList().getGroupByName(group) == null) return true;
+    System.out.println("Группа "+group+" уже добавлена");
+    return false;
+    }
+
+    /**
+     * Проверим добавлен уин или нет
+     * @param group
+     * @return
+     */
+    public boolean getContactById(String uin) {
+    if(con.getContactList().getContactById(uin) == null) return true;
+    System.out.println("Уин "+uin+" уже добавлен");
+    return false;
+    }
+
+    /**
+    * Удаление пользователя с UIN
+    * @param uin - UIN пользователя
+    */
+        //@Override
+    public void RemoveContactList(String uin) {
+    try {
+
+    if(!getContactById(uin))  con.getContactList().removeContact(uin);
+
+    } catch (ContactListOperationException ex) {
+    System.out.println("Error " + ex.getMessage());
+    }
+    }
+
+    /**
+    * Очистка контакт листа
+    */
+        //@Override
+    public void clearContactList() {
+        try {
+            con.getContactList().clearContactList();
+        } catch (ContactListOperationException ex) {
+            System.out.println("Error " + ex.getMessage());
+        }
+
+    }
+
+    /**
+    * Добавляем новую группу
+    * @param group
+    */
+        //@Override
+    public void addGroup(String group){
+    try {
+    if(getGroupByName(group))  con.getContactList().addGroup(group);
+    } catch (ContactListOperationException ex) {
+    System.out.println("Error " + ex.getMessage());
+    }
+    }
+
+    /**
+    * Удаление группы по ее названию
+    * @param group
+    */
+        //@Override
+    public void delGroup(String group){
+    try {
+         for (Iterator iter = this.con.getContactList().getRootGroup().getContainedItems().iterator(); iter.hasNext(); ) {
+          ContactListItem item = (ContactListItem)iter.next();
+          if (item instanceof Group) {
+            Group grp = (Group)item;
+          }
+        }
+    if(!getGroupByName(group)) con.getContactList().delGroup(group);
+
+    } catch (ContactListOperationException ex) {
+    System.out.println("Error " + ex.getMessage());
+    }
+    }
+
+public void onUpdateContactList(ContactListEvent e) {
+System.out.println("\nMy Contact List");
+System.out.println(con.getContactList());
+}
+
+   // //@Override
+public void onSsiModifyingAck(SsiModifyingAckEvent e) {
+for (int i = 0; i < e.getResults().length; i++) {
+System.out.println("Result = " + e.getResults()[i] + " code = " + e.getResults()[i].getResult());
+}
+if (e.getResults()[e.getResults().length - 1].getResult() == SsiResultModeEnum.NO_ERRORS) {
+System.out.println("\nMy Contact List");
+System.out.println(con.getContactList().toString());
+}
+}
+
+ //@Override
+public void onSsiFutureAuthGrant(SsiFutureAuthGrantEvent e) {
+System.out.println("FutureAuthGrant UIN: " + e.getSenderUin() + " Mesage: " + e.getMessage());
+}
+
+   //@Override
+public void onSsiAuthRequest(SsiAuthRequestEvent e) {
+try {
+System.out.println("AuthRequest UIN: " + e.getSenderUin() + " Mesage: " + e.getMessage());
+con.getContactList().sendAuthReplyMessage(e.getSenderUin(), "Welcome!", true);
+} catch (ContactListOperationException ex) {
+System.out.println(ex.getMessage());
+}
+}
+
+ //@Override
+public void onSsiAuthReply(SsiAuthReplyEvent e) {
+System.out.println("AuthReply UIN: " + e.getSenderUin() + " Mesage: " + e.getMessage() + " Flag: " + e.getAuthFlag());
+}
+
+    public void addContactList(String sn) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+ 
 }

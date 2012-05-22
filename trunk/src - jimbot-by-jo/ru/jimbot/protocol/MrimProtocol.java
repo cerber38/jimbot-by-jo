@@ -474,6 +474,32 @@ public class MrimProtocol implements Protocol, CommandProtocolListener,
 
         }
 
+    public void addContactList(String contact, String group) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean getGroupByName(String group) {
+        return false;
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean getContactById(String uin) {
+        return false;
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void clearContactList() {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void addGroup(String group) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void delGroup(String group) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 
     /**
      * *********************************************************************************************
